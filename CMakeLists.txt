@@ -73,6 +73,7 @@ message(STATUS "Sources: ${SOURCES}")
 
 add_library(sqlite_unnacent_lower_lib STATIC ${SOURCES})
 target_link_libraries(sqlite_unnacent_lower_lib PUBLIC utf8proc)
+set_target_properties(sqlite_unnacent_lower_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Add executable
 add_library(unaccent_lower SHARED "src/main.cpp")
