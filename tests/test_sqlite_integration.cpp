@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <sqlite3.h>
 #include <string>
-#include <vector>
 
 #ifndef UNACCENT_EXT_PATH
 #  error "Defina UNACCENT_EXT_PATH no CMake apontando para a .so/.dylib/.dll"
@@ -18,11 +17,11 @@ protected:
         // 2) habilita carregamento de extensões
         //    (você pode usar sqlite3_enable_load_extension(db,1) ou db_config)
         int rc = sqlite3_db_config(db, SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, 1, nullptr);
-        ASSERT_EQ(SQLITE_OK, rc) << sqlite3_errmsg(db);  // :contentReference[oaicite:0]{index=0}
+        ASSERT_EQ(SQLITE_OK, rc) << sqlite3_errmsg(db);
 
         // 3) carrega a extensão
         char* err = nullptr;
-        rc = sqlite3_load_extension(db, UNACCENT_EXT_PATH, nullptr, &err);  // :contentReference[oaicite:1]{index=1}
+        rc = sqlite3_load_extension(db, UNACCENT_EXT_PATH, nullptr, &err);
         if (rc != SQLITE_OK) {
             std::string msg = err ? err : "(no message)";
             sqlite3_free(err);
@@ -31,7 +30,7 @@ protected:
     }
 
     void TearDown() override {
-        if (db) sqlite3_close(db);  // :contentReference[oaicite:2]{index=2}
+        if (db) sqlite3_close(db);
     }
 
     // helper: executa 1 SELECT que retorna 1 coluna/1 linha como string

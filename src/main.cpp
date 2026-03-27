@@ -4,9 +4,6 @@ extern "C" {
 SQLITE_EXTENSION_INIT1
 }
 
-#include <stdexcept>
-#include <string>
-
 extern "C" {
 #include <utf8proc.h>
 }
@@ -22,8 +19,8 @@ static void unaccent_lower_sqlite(sqlite3_context *ctx, int argc,
     const unsigned char *in = sqlite3_value_text(argv[0]);
     int inlen = sqlite3_value_bytes(argv[0]);
     try {
-        std::string out = unaccent_lower_impl(in, inlen);
-        sqlite3_result_text(ctx, out.c_str(), static_cast<int>(out.size()),
+        auto [view, memown] = unaccent_lower_impl(in, inlen);
+        sqlite3_result_text(ctx, view.data(), static_cast<int>(view.size()),
                             SQLITE_TRANSIENT);
     } catch (const std::exception &e) {
         sqlite3_result_error(ctx, e.what(), -1); // <— mostra a msg
@@ -36,15 +33,17 @@ extern "C"
 #ifdef _WIN32
     __declspec(dllexport)
 #endif
-        int sqlite3_unaccentlower_init(sqlite3 *db, char **pzErrMsg,
-                                       const sqlite3_api_routines *pApi);
+    int
+    sqlite3_unaccentlower_init(sqlite3 *db, char **pzErrMsg,
+                               const sqlite3_api_routines *pApi);
 
 extern "C"
 #ifdef _WIN32
     __declspec(dllexport)
 #endif
-        int sqlite3_unaccentlower_init(sqlite3 *db, char **pzErrMsg,
-                                       const sqlite3_api_routines *pApi) {
+    int
+    sqlite3_unaccentlower_init(sqlite3 *db, char **pzErrMsg,
+                               const sqlite3_api_routines *pApi) {
     SQLITE_EXTENSION_INIT2(pApi)
     int flags = SQLITE_UTF8 | SQLITE_DETERMINISTIC;
     if (sqlite3_create_function(db, "UNACCENT_LOWER", 1, flags, nullptr,
