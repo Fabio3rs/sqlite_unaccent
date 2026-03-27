@@ -1,4 +1,4 @@
-# sqlite_unnacent_lower
+# sqlite_unaccent
 
 
 **OBSERVAÇÃO**
