@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(sqlite_unnacent_lower C CXX)
+project(sqlite_unaccent_lower C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_C_STANDARD 11)
@@ -71,13 +71,13 @@ filter_out(EXCLUDE_FILES SOURCES)
 
 message(STATUS "Sources: ${SOURCES}")
 
-add_library(sqlite_unnacent_lower_lib STATIC ${SOURCES})
-target_link_libraries(sqlite_unnacent_lower_lib PUBLIC utf8proc)
-set_target_properties(sqlite_unnacent_lower_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+add_library(sqlite_unaccent_lower_lib STATIC ${SOURCES})
+target_link_libraries(sqlite_unaccent_lower_lib PUBLIC utf8proc)
+set_target_properties(sqlite_unaccent_lower_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Add executable
 add_library(unaccent_lower SHARED "src/main.cpp")
-target_link_libraries(unaccent_lower sqlite_unnacent_lower_lib utf8proc)
+target_link_libraries(unaccent_lower sqlite_unaccent_lower_lib utf8proc)
 
 if(ENABLE_TESTS)
     add_subdirectory(tests)

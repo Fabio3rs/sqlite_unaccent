@@ -79,7 +79,7 @@ CREATE INDEX idx_usuario_nome_raw ON usuarios(UNACCENT_LOWER(nome));
 O código foi refatorado para separar a lógica de processamento de texto da integração com o SQLite:
 
 - `src/lib.cpp`: Lógica principal de tratamento de strings (sem dependência direta do SQLite).
-- `src/unnacent_sqlite.cpp`: Wrappers das funções para a API do SQLite.
+- `src/unaccent_sqlite.cpp`: Wrappers das funções para a API do SQLite.
 - `src/main.cpp`: Ponto de entrada da extensão e registro das funções.
 - `include/`: Cabeçalhos e definições de tipos.
 - `tests/`: Testes unitários (lógica) e de integração (SQLite).

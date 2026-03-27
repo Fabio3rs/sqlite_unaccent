@@ -1,4 +1,4 @@
-#include "unnacent_sqlite.hpp"
+#include "unaccent_sqlite.hpp"
 
 extern "C" {
 #include <utf8proc.h>
