@@ -14,3 +14,6 @@ using utf8owingptr_t = std::unique_ptr<utf8proc_uint8_t, freewrapper>;
 
 std::pair<std::string_view, utf8owingptr_t>
 unaccent_lower_impl(const unsigned char *in, int inlen);
+
+std::pair<std::string_view, utf8owingptr_t>
+unaccent_impl(const unsigned char *in, int inlen);

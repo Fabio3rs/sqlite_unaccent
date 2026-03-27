@@ -5,14 +5,15 @@
 Esta extensão foi feita para uso pessoal e pode não ser adequada para produção.
 
 
-Uma extensão para SQLite que fornece a função `UNACCENT_LOWER(text)`, permitindo remover acentos (diacríticos) e converter textos para minúsculas utilizando regras de *Unicode Case Folding*.
+Uma extensão para SQLite que fornece as funções `UNACCENT_LOWER(text)` e `UNACCENT(text)`, permitindo remover acentos (diacríticos) e, opcionalmente, converter textos para minúsculas utilizando regras de *Unicode Case Folding*.
 
-Esta extensão é ideal para buscas textuais onde a diferenciação de acentos e capitalização não é desejada, garantindo alta compatibilidade com caracteres internacionais (UTF-8).
+Esta extensão é ideal para buscas textuais onde a diferenciação de acentos não é desejada, garantindo alta compatibilidade com caracteres internacionais (UTF-8).
 
 ## Características
 
 - **Remoção de Acentos:** Remove diacríticos de caracteres como `á`, `é`, `ç`, `ñ`, etc.
-- **Case Folding:** Converte para minúsculas seguindo o padrão Unicode (ex: `ß` torna-se `ss`).
+- **Opção de Case Folding (`UNACCENT_LOWER`):** Converte para minúsculas seguindo o padrão Unicode (ex: `ß` torna-se `ss`).
+- **Preservação de Capitalização (`UNACCENT`):** Remove acentos mas mantém maiúsculas/minúsculas originais.
 - **Preservação de Símbolos:** Mantém caracteres que não possuem representação sem acento (ex: emojis, letras gregas como `π`).
 - **Suporte a Combining Marks:** Lida corretamente com acentos representados como caracteres combinantes (U+0301, etc).
 - **Integração com SQLite:** Pode ser utilizada em consultas `SELECT`, cláusulas `WHERE` e até na criação de índices baseados em expressões.
@@ -57,9 +58,13 @@ sqlite3_load_extension(db, "./libunaccent_lower.so", NULL, &err);
 ### Exemplos de Uso
 
 ```sql
--- Consulta simples
+-- UNACCENT_LOWER: remove acentos e converte para minúsculas
 SELECT UNACCENT_LOWER('Olá, Açúcar! ÉÇÃO — Straße, Café, π');
 -- Resultado: 'ola, acucar! ecao — strasse, cafe, π'
+
+-- UNACCENT: remove acentos preservando a capitalização
+SELECT UNACCENT('ÁRVORE, Açúcar e Ímã');
+-- Resultado: 'ARVORE, Acucar e Ima'
 
 -- Uso em filtros
 SELECT * FROM usuarios
@@ -68,6 +73,16 @@ WHERE UNACCENT_LOWER(nome) = UNACCENT_LOWER('João');
 -- Criação de índice para buscas rápidas
 CREATE INDEX idx_usuario_nome_raw ON usuarios(UNACCENT_LOWER(nome));
 ```
+
+## Estrutura do Projeto
+
+O código foi refatorado para separar a lógica de processamento de texto da integração com o SQLite:
+
+- `src/lib.cpp`: Lógica principal de tratamento de strings (sem dependência direta do SQLite).
+- `src/unnacent_sqlite.cpp`: Wrappers das funções para a API do SQLite.
+- `src/main.cpp`: Ponto de entrada da extensão e registro das funções.
+- `include/`: Cabeçalhos e definições de tipos.
+- `tests/`: Testes unitários (lógica) e de integração (SQLite).
 
 ## Testes
 
@@ -81,10 +96,10 @@ ctest --output-on-failure
 ```
 
 Os testes cobrem:
-- Casos básicos de acentuação.
+- Casos básicos de acentuação (com e sem case folding).
 - Regras especiais como o Eszett alemão (`ß`).
 - Tratamento de emojis e caracteres especiais.
-- Integração real com banco de dados SQLite em memória.
+- Integração real com banco de dados SQLite em memória (DDL, DML e índices).
 
 ## Licença
 

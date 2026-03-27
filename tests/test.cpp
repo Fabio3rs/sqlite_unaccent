@@ -30,3 +30,27 @@ TEST(UnaccentLower, CombiningMarks) {
     auto [out, memown] = unaccent_lower_impl(do_cast(in), 3);
     EXPECT_EQ(out, U("a")); // STRIPMARK remove
 }
+
+TEST(Unaccent, BasicPreservesCase) {
+    auto [out, memown] =
+        unaccent_impl(do_cast("ÁRVORE, Açúcar e Ímã"),
+                      static_cast<int>(sizeof("ÁRVORE, Açúcar e Ímã") - 1));
+    EXPECT_EQ(out, U("ARVORE, Acucar e Ima"));
+}
+
+TEST(Unaccent, DottedCapitalI) {
+    auto [out, memown] = unaccent_impl(
+        do_cast("İstanbul"), static_cast<int>(sizeof("İstanbul") - 1));
+    EXPECT_EQ(out, U("Istanbul"));
+}
+
+TEST(Unaccent, CombiningMarksPreserveCase) {
+    // "A"/"a" com acento agudo combinante
+    const char *in = "A\xCC\x81"
+                     "a\xCC\x81"; // split to avoid hex overrun
+    auto [out, memown] =
+        unaccent_impl(do_cast(in), static_cast<int>(sizeof("A\xCC\x81"
+                                                           "a\xCC\x81") -
+                                                    1));
+    EXPECT_EQ(out, U("Aa"));
+}
