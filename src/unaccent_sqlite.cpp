@@ -40,6 +40,6 @@ extern "C" void unaccent_sqlite(sqlite3_context *ctx, int argc,
     } catch (const std::exception &e) {
         sqlite3_result_error(ctx, e.what(), -1); // <— mostra a msg
     } catch (...) {
-        sqlite3_result_error(ctx, "unaccent_lower: unknown error", -1);
+        sqlite3_result_error(ctx, "unaccent: unknown error", -1);
     }
 }
